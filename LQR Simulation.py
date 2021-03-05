@@ -138,7 +138,7 @@ print("K = \n", np.round(K, 4))
 
 # Simulation
 t_start = 0
-t_end = 5
+t_end = 10
 dt = 0.01
 t = np.arange(t_start,t_end+dt,dt)     # deret waktu 0 - 5 dengan kenaikan dt (0,01)
 
