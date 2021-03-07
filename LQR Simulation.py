@@ -118,7 +118,7 @@ C = np.array([[ 1,   0,   0,   0,   0,   0,],
               [ 0,   0,   0,   0,   1,   0,]])
 print("C = \n{}".format(np.around(C, 4)))
 
-D = np.zeros((3,3));
+D = np.zeros((3,3))
 
 # =====================> Sistem Kendali LQR     
 # Nilai untuk ditelaa agar mendapatkan respon sistem yang sesuai
