@@ -101,7 +101,9 @@ A = np.array([[0,        1,         0,         0,         0,       0],   # Roll
               [0, (Izz-Ixx)*r/Iyy,  0,         0,         0,       0],   # Kec. Sudut Pitch
               [0,        0,         0,         0,         0,       1],   # Yaw
               [0, (Ixx-Iyy)*q/Izz,  0,         0,         0,       0]])  # Kec. Sudut Yaw
+eigen_value = np.linalg.eigvals(A)
 print("A = \n{}".format(np.around(A, 4)))
+print("EigenValue = \n{}".format(eigen_value))
 
 B = np.array([[0,       0,       0],
               [1/Ixx,   0,       0],
@@ -115,16 +117,17 @@ C = np.array([[ 1,   0,   0,   0,   0,   0,],
               [ 0,   0,   1,   0,   0,   0,],
               [ 0,   0,   0,   0,   1,   0,]])
 print("C = \n{}".format(np.around(C, 4)))
-#  D = zeros(3,3);
+
+D = np.zeros((3,3));
 
 # =====================> Sistem Kendali LQR     
 # Nilai untuk ditelaa agar mendapatkan respon sistem yang sesuai
-Q = np.array([[ 27,  0,   0,   0,   0,   0],     #Roll
-              [ 0,   0.7, 0,   0,   0,   0],     #gyro roll
-              [ 0,   0,   25,  0,   0,   0],     #pitch
-              [ 0,   0,   0,   0.4, 0,   0],     #gyro pitch
-              [ 0,   0,   0,   0,   43,  0],     #yaw
-              [ 0,   0,   0,   0,   0,   0.85]]) #gyro yaw
+Q = np.array([[ 1,   0,   0,   0,   0,   0],     #Roll
+              [ 0,   1,   0,   0,   0,   0],     #gyro roll
+              [ 0,   0,   1,   0,   0,   0],     #pitch
+              [ 0,   0,   0,   1,   0,   0],     #gyro pitch
+              [ 0,   0,   0,   0,   1,   0],     #yaw
+              [ 0,   0,   0,   0,   0,   1]])    #gyro yaw
 print("Q = \n{}".format(np.around(Q, 4)))
 
 # Matriks R mengikuti jumlah u
@@ -135,6 +138,7 @@ print("R = \n{}".format(np.around(A, 4)))
 
 K, S, E = ctl.lqr(A, B, Q, R)
 print("K = \n", np.round(K, 4))
+print("Eigen Value = \n{}".format(E))
 
 # Simulation
 t_start = 0
