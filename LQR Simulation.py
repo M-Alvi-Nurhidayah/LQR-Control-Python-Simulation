@@ -3,6 +3,7 @@
 # M Alvi Nurhidayah
 
 import numpy as np
+import math
 import control as ctl
 import control.matlab as matlab
 import matplotlib.pyplot as plt
@@ -13,42 +14,42 @@ M_body = 1.276
 p_body = 0.1
 l_body = 0.94
 t_body = 0.165
-x_body = 1
-y_body = 1
-z_body = 1
+x_body = 0.0
+y_body = 0.0
+z_body = 0.0
 M_sayap = 0.38
 p_sayap = 1.435
 l_sayap = 0.22
 t_sayap = 0.025
-x_sayap = 1
-y_sayap = 1
-z_sayap = 1
+x_sayap = 0.045
+y_sayap = 0.0
+z_sayap = 0.0725
 M_Hstab = 0.079
-p_Hstab = 0.001
+p_Hstab = 0.56
 l_Hstab = 0.185
 t_Hstab = 0.015
-x_Hstab = 1
-y_Hstab = 1
-z_Hstab = 1
-M_Vstab = 0.01
+x_Hstab = 0.5675
+y_Hstab = 0.0
+z_Hstab = 0.0775
+M_Vstab = 0.02
 p_Vstab = 0.005
 l_Vstab = 0.332
 t_Vstab = 0.227
-x_Vstab = 1
-y_Vstab = 1
-z_Vstab = 1
-M_motor = 0.5
-r_motor = 0.002
-t_motor = 0.002
-x_motor = 1
-y_motor = 1
-z_motor = 1
+x_Vstab = 0.0494
+y_Vstab = 0.0
+z_Vstab = 0.0285
+M_motor = 0.108
+r_motor = 0.014
+t_motor = 0.014
+x_motor = 0.295
+y_motor = 0
+z_motor = 0.085
 M_prop = 0.015
-r_prop = 0.11 
-t_prop = 0.015
-x_prop = 1
-y_prop = 1
-z_prop = 1
+r_prop = 0.254 
+t_prop = 0.127
+x_prop = 0.295
+y_prop = 0.0
+z_prop = 0.085
 M_pesawat = 2.78
 
 # =====================> Calculating Momen Inertia
@@ -79,7 +80,7 @@ Izz = (((M_body * (p_body*p_body + l_body*l_body) / 12) + (M_body * (x_body*x_bo
 # Tampilkan nilai inersia
 print("inersia X : {:.3f}".format(Ixx))
 print("inersia Y : {:.3f}".format(Iyy))
-print("inersia Z : {:.3f}".format(Izz))
+print("inersia Z : {:.3f}\n".format(Izz))
 
 # =====================> State Space Modelling
 # L1  = 1.435;%panjang sayap yang sejajar dengan horzontal stab (dari CG).
@@ -92,7 +93,7 @@ q = 0.000001
 # Tampilkan nilai r, p, q
 print("nilai r : {:.3f}".format(r))
 print("nilai p : {:.3f}".format(p))
-print("nilai q : {:.3f}".format(q))
+print("nilai q : {:.3f}\n".format(q))
 
 # State Space Modelling
 A = np.array([[0,        1,         0,         0,         0,       0],   # Roll
@@ -102,8 +103,7 @@ A = np.array([[0,        1,         0,         0,         0,       0],   # Roll
               [0,        0,         0,         0,         0,       1],   # Yaw
               [0, (Ixx-Iyy)*q/Izz,  0,         0,         0,       0]])  # Kec. Sudut Yaw
 eigen_value = np.linalg.eigvals(A)
-print("A = \n{}".format(np.around(A, 4)))
-print("EigenValue = \n{}".format(eigen_value))
+print("A = \n{}\n".format(np.around(A, 4)))
 
 B = np.array([[0,       0,       0],
               [1/Ixx,   0,       0],
@@ -111,68 +111,132 @@ B = np.array([[0,       0,       0],
               [0,     1/Iyy,     0],
               [0,       0,       0],
               [0,       0,   1/Izz]])
-print("B = \n{}".format(np.around(B, 4)))
+print("B = \n{}\n".format(np.around(B, 4)))
+
+# Eigen Value of A and Controllability
+print("EigenValue before ClosedLoop= \n{}\n".format(eigen_value))
+controllability = ctl.ctrb(A, B)
+controllability = np.linalg.matrix_rank(controllability)
+print("controllability : {}\n".format(controllability)) 
 
 C = np.array([[ 1,   0,   0,   0,   0,   0,],
+              [ 0,   0,   0,   0,   0,   0,],
               [ 0,   0,   1,   0,   0,   0,],
-              [ 0,   0,   0,   0,   1,   0,]])
-print("C = \n{}".format(np.around(C, 4)))
+              [ 0,   0,   0,   0,   0,   0,],
+              [ 0,   0,   0,   0,   1,   0,],
+              [ 0,   0,   0,   0,   0,   0,]])
+print("C = \n{}\n".format(np.around(C, 4)))
 
-D = np.zeros((3,3))
+D = np.zeros((6,3))
 
 # =====================> Sistem Kendali LQR     
 # Nilai untuk ditelaa agar mendapatkan respon sistem yang sesuai
-Q = np.array([[ 1,   0,   0,   0,   0,   0],     #Roll
+Q = np.array([[ 27,   0,   0,   0,   0,   0],     #Roll
               [ 0,   1,   0,   0,   0,   0],     #gyro roll
               [ 0,   0,   1,   0,   0,   0],     #pitch
               [ 0,   0,   0,   1,   0,   0],     #gyro pitch
               [ 0,   0,   0,   0,   1,   0],     #yaw
               [ 0,   0,   0,   0,   0,   1]])    #gyro yaw
-print("Q = \n{}".format(np.around(Q, 4)))
+print("Q = \n{}\n".format(np.around(Q, 4)))
 
 # Matriks R mengikuti jumlah u
 R = np.array([[ 1,   0,   0],
               [ 0,   1,   0],
               [ 0,   0,   1]])
-print("R = \n{}".format(np.around(A, 4)))
+print("R = \n{}\n".format(np.around(A, 4)))
 
 K, S, E = ctl.lqr(A, B, Q, R)
-print("K = \n", np.round(K, 4))
-print("Eigen Value = \n{}".format(E))
+print("K = \n{}\n".format(np.round(K, 4)))
+print("Eigen Value ClosedLoop = \n{}\n".format(E))
 
-# Simulation
+# ======================> Simulation
 t_start = 0
 t_end = 10
 dt = 0.01
 t = np.arange(t_start,t_end+dt,dt)     # deret waktu 0 - 5 dengan kenaikan dt (0,01)
 
-# ws = 0.0025 % waktu sampel
-# [K,SS,ee] = lqrd(A,B,Q,R,ws) %lqr discrete
-# # https://www.mathworks.com/help/control/ref/lqrd.html
+Acl = A-B*K
+Bcl = np.identity(6)
+Ccl = np.identity(6)
+Dcl = np.zeros((6,6))
 
-# Ac = [(A-B*K)];
-# Bc = eye(6);
-# Cc = eye(6);
-# Dc = 0;
+sys_cl = ctl.ss((Acl), B, C, D)
+sys_ol = ctl.ss(A, B, C, D)
 
-# sys_cl = ss(Ac,Bc,Cc,Dc);
-# sys_ol = ss(A,B,C,D);
+# Inisialisasi Gangguan Awal
+roll = math.radians(45) 
+gyro_roll = math.radians(0)
+pitch = math.radians(45)
+gyro_pitch = math.radians(0)
+yaw = math.radians(45)
+gyro_yaw = math.radians(0)
 
-# info = stepinfo(sys_cl)
+x = matlab.initial(sys_cl,t,np.array([roll, gyro_roll, pitch, gyro_pitch, yaw, gyro_yaw]))
+x1 = [1,0,0,0,0,0]@np.transpose(x[0])
+x2 = [0,1,0,0,0,0]@np.transpose(x[0])
+x3 = [0,0,1,0,0,0]@np.transpose(x[0])
+x4 = [0,0,0,1,0,0]@np.transpose(x[0])
+x5 = [0,0,0,0,1,0]@np.transpose(x[0])
+x6 = [0,0,0,0,0,1]@np.transpose(x[0])
 
-# poles=eig(A) %kalo polesnya positif sulit dikendaliin
+print("roll awal \t: ", x1[0])
+print("gyro roll awal \t: ", x2[0])
+print("pitch awal \t: ", x3[0])
+print("gyro pitch awal : ", x4[0])
+print("yaw awal \t: ", x5[0])
+print("gyro yaw awal \t:  {}\n".format(x6[0]))
 
-# control=ctrb(sys_cl)
-# controllability=rank(control) %matriks keterkendalian besarnya harus sama seperti matriks A
+# Initialize Desired Control Paremeter
+toleransi_sudut = 0.1
+toleransi_kecsudut = 0.1
+rt = t_end
+st = t_end
+rtTarget = 0.2
 
-# roll = deg2rad(30); %besar sudut gangguan awal
-# pitch = deg2rad(30);
-# yaw = deg2rad(30);
+OvS = 0
+peakOv = np.zeros(30)
+OvKe = 0
+OvBef = 0 
+J = 0
+t0 = int(round(time() * 1000))
 
+print(t0)
 
-# x0=[roll;0;pitch;0;yaw;0]; %gangguan awal sistem
-# t=0:0.1:3;
-# x=initial(sys_cl,x0,t);
+# Looping Simulation
+for i in range(0, len(t)):
+    # print("data ke-",i," = ",x1[i])
+    # print("waktu ke-",i," = ",t[i])
+    if (abs(x1[i]) < toleransi_sudut and rt == t_end):
+        rt = t[i]
+        st = t[i]
+    if (t[i] > rt and abs(x1[i]) > toleransi_sudut):
+        OvS = x1[i]
+        if (abs(OvS) < abs(OvBef) ):
+            peakOv[OvKe] = OvBef
+        else:
+            OvBef = OvS
+    if (t[i] > rt and peakOv[OvKe] > 0):
+        OvKe = OvKe +1
+        OvS = 0
+        OvBef = 0
+    
+    # menghitung cost function
+    t1 = time()*1000
+    dt = t1 - t0
+#    print("t0 = ",t0/1000)
+#    print("t1 = ",t1/1000)
+#    print("dt = ",dt/1000)
+    t0 = t1
+    xCF = np.array([[x1[i]],[x2[i]],[x3[i]],[x4[i]],[x5[i]],[x6[i]]])
+    u = -K@xCF
+#    print("u = ", u)
+    J = J + ((np.transpose(xCF)@Q@xCF) + (np.transpose(u)@R@u))*dt/1000
+#    print("J ke-",i," = ",J)
+
+# cost funtion
+print("Rise Time = ",rt)
+print("Overshoot =\n",peakOv)
+print("Cost Function = ",J)
 
 # rt = 0;
 

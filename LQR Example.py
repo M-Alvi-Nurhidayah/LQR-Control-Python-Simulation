@@ -33,8 +33,6 @@ x1 = [1,0,0]@np.transpose(x[0])
 x2 = [0,1,0]@np.transpose(x[0])
 x3 = [0,0,1]@np.transpose(x[0])
 
-
-
 OvS = 0
 peakOv = np.zeros(30)
 OvKe = 0
@@ -43,8 +41,8 @@ J = 0
 t0 = int(round(time() * 1000))
 
 for i in range(0, len(t)):
-#    print("data ke-",i," = ",x1[i])
-#    print("waktu ke-",i," = ",t[i])
+    print("data ke-",i," = ",x1[i])
+    print("waktu ke-",i," = ",t[i])
     if (abs(x1[i]) < tolX1 and rt == t_end):
         rt = t[i]
         st = t[i]
