@@ -236,7 +236,7 @@ for i in range(0, len(t)):
 # cost funtion
 print("Rise Time = ",rt)
 print("Overshoot =\n",peakOv)
-print("Cost Function = ",J)
+# print("Cost Function = ",J)
 
 # rt = 0;
 
