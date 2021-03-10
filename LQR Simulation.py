@@ -131,7 +131,7 @@ D = np.zeros((6,3))
 
 # =====================> Sistem Kendali LQR     
 # Nilai untuk ditelaa agar mendapatkan respon sistem yang sesuai
-Q = np.array([[ 27,   0,   0,   0,   0,   0],     #Roll
+Q = np.array([[ 30,   0,   0,   0,   0,   0],     #Roll
               [ 0,   1,   0,   0,   0,   0],     #gyro roll
               [ 0,   0,   1,   0,   0,   0],     #pitch
               [ 0,   0,   0,   1,   0,   0],     #gyro pitch
@@ -213,6 +213,7 @@ for i in range(0, len(t)):
         OvS = x1[i]
         if (abs(OvS) < abs(OvBef) ):
             peakOv[OvKe] = OvBef
+            print("masuk ov")
         else:
             OvBef = OvS
     if (t[i] > rt and peakOv[OvKe] > 0):
@@ -236,135 +237,4 @@ for i in range(0, len(t)):
 # cost funtion
 print("Rise Time = ",rt)
 print("Overshoot =\n",peakOv)
-# print("Cost Function = ",J)
-
-# rt = 0;
-
-# tol_awal_roll = 5/100*90;
-# tol_awal_pitch = 5/100*90;
-# tol_awal_yaw = 5/100*180;
-
-# u=zeros(size(t));
-
-# nilai input proses
-# u1 = [1 0 0 ]*(-K*x');
-# u2 = [0 1 0 ]*(-K*x');
-# u3 = [0 0 1 ]*(-K*x');
-
-# Simulasi Anti Roll
-# x3=[1 0 0 0 0 0 ]*x'; %gangguan roll
-
-# figure(1)
-# inf1 = stepinfo(x3)
-# degnya = 0;
-# for v = 1:1:101
-#     degnya = x3(1,v);
-#     degnya = rad2deg(degnya);
-#       if degnya <= 4.5;
-#             rt = (v-1)/10; %rt = rise time
-#             break;
-#       end
-# end
-# w = -35:0.1:35;
-# plot((rt*ones(size(w))),w)
-# hold on;
-
-
-# plot(t,(0*tol_awal_roll*ones(size(t))))
-# hold on;
-
-# plot(t,(-1*tol_awal_roll*ones(size(t))))
-# hold on;
-
-# plot(t,(1*tol_awal_roll*ones(size(t))))
-# hold on;
-
-
-# plot (t,rad2deg(x3))
-# hold off;
-
-# legend('Rise Time','Setpoint','Toleransi Bawah','Toleransi Atas','Roll')
-
-# ylim ([-20, 30])
-# grid
-# title('Respons Sudut Penstabil-Roll')
-# xlabel('Waktu')
-# ylabel('Sudut Wahana')
-
-# %Simulasi Anti Pitch
-# x4=[0 0 1 0 0 0]*x'; %gangguan pitch
-# inf2 = stepinfo(x4)
-# figure(2)
-
-# degnya = 0;
-# for v = 1:1:101
-#     degnya = x4(1,v);
-#     degnya = rad2deg(degnya);
-#       if degnya <= 4.5;
-#             rt = (v-1)/10;
-#             break;
-#       end
-# end
-# w = -35:0.1:35;
-# plot((rt*ones(size(w))),w)
-# hold on;
-
-
-# plot(t,(0*tol_awal_pitch*ones(size(t))))
-# hold on;
-
-# plot(t,(-1*tol_awal_pitch*ones(size(t))))
-# hold on;
-
-# plot(t,(1*tol_awal_pitch*ones(size(t))))
-# hold on;
-
-
-# plot (t,rad2deg(x4))
-# hold off;
-
-# legend('Rise Time','Setpoint','Toleransi Bawah','Toleransi Atas','Pitch')
-# ylim ([-20, 30])
-# grid
-# title('Respons Sudut Penstabil-Pitch')
-# xlabel('Waktu')
-# ylabel('Sudut Wahana')
-
-# %Simulasi Anti Yaw
-# x5=[ 0 0 0 0 1 0]*x'; %gangguan yaw
-
-# figure(3)
-# inf3 = stepinfo(x5,'RiseTimeLimits',[0.05,0.95])
-# degnya = 0;
-# for v = 1:1:101
-#     degnya = x5(1,v);
-#     degnya = rad2deg(degnya);
-#       if degnya <= 4.5;
-#             rt = (v-1)/10;
-#             break;
-#       end
-# end
-# w = -35:0.1:35;
-# plot((rt*ones(size(w))),w)
-# hold on;
-
-
-# plot(t,(0*tol_awal_yaw*ones(size(t))))
-# hold on;
-
-# plot(t,(-1*tol_awal_yaw*ones(size(t))))
-# hold on;
-
-# plot(t,(1*tol_awal_yaw*ones(size(t))))
-# hold on;
-
-
-# plot (t,rad2deg(x5))
-# hold off;
-
-# legend('Rise Time','Setpoint','Toleransi Bawah','Toleransi Atas','Yaw')
-# ylim ([-20, 30])
-# grid
-# title('Respons Sudut Penstabil-Yaw')
-# xlabel('Waktu')
-# ylabel('Sudut Wahana')
+print("Cost Function = ",J)
